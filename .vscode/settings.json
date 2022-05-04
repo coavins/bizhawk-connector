@@ -1,5 +1,12 @@
 {
 	"Lua.diagnostics.globals": [
-		"bit"
+		"bit",
+		"client",
+		"emu",
+		"memory",
+		"gameinfo",
+		"gui",
+		"memorysavestate",
+		"event"
 	]
 }
