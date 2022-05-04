@@ -207,7 +207,7 @@ function hal.startup()
 		print('Unsupported Lua core:', luacore)
 		return
 	end
-	
+
 	if emu.getsystemid() == 'NULL' then
 		print('Emulator not running')
 		-- Keep the script active with an empty loop
@@ -233,11 +233,11 @@ function hal.validate_environment()
 
   if client.getversion ~= nil then
     bizhawk_version = client.getversion()
-  else 
-  	if ((emu.getregisters().H == nil) or (emu.getregisters().H == 0)) then 
+  else
+  	if ((emu.getregisters().H == nil) or (emu.getregisters().H == 0)) then
   		bizhawk_version = "2.3.0"
 	else
-		bizhawk_version = "unsupported" 
+		bizhawk_version = "unsupported"
 	end
   end
 
