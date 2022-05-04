@@ -241,30 +241,27 @@ function hal.validate_environment()
 	end
   end
 
-  --this deprecated call should be here, do not remove it
-  if (hal._luacore() == nil) or ((bizhawk_version~="2.3.0") and (bizhawk_version~="2.3.1") and (bizhawk_version:sub(1,3)~="2.4") and (bizhawk_version:sub(1,3)~="2.5") and (bizhawk_version:sub(1,3)~="2.6")) then
-    print("Crowd Control requires BizHawk 2.3 - 2.6 to function.")
-    print("You can download the correct version of BizHawk from:")
-    print("        https://github.com/TASVideos/BizHawk/releases")
-    print("Check our Setup Guide out at https://crowdcontrol.live/setup")
-    print("If you need more help. Join our Discord! https://discord.warp.world")
-    gui.text(25,50, "Crowd Control requires BizHawk 2.3 - 2.6 to function.")
-    gui.text(25,100, "You can download the correct version of BizHawk from:")
-    gui.text(25,150, "        https://github.com/TASVideos/BizHawk/releases")
-    gui.text(25,200, "If you need more help. Join our Discord! https://discord.warp.world")
-    return false
-  elseif (hal._luacore() ~= 'LuaInterface')  then
+	local known_good = {}
+	known_good['2.3.0'] = true
+	known_good['2.3.1'] = true
+	known_good['2.4'] = true
+	known_good['2.6'] = true
+	known_good['2.7'] = true
+
+	if (hal._luacore() == nil) or (not known_good[bizhawk_version] and not known_good[bizhawk_version:sub(1,3)]) then
+		print("This script might require BizHawk 2.3 - 2.7 to function")
+		gui.text(25,50, "This script might require BizHawk 2.3 - 2.7 to function")
+		return false
+	elseif (hal._luacore() ~= 'LuaInterface')  then
 		print('Unsupported Lua core:', hal._luacore())
-    print("Crowd Control requires Lua+LuaInterface to function.")
+    print("This script requires Lua+LuaInterface to function.")
     print("Click Config -> Customize and then the Advanced Tab.")
     print("At the bottom, click the Lua+LuaInterface and then OK.")
-    print("Exit out of BizHawk completely and click Launch in CC.")
-    print("Check our Setup Guide out at https://crowdcontrol.live/setup")
-    gui.text(25,50, "Crowd Control requires Lua+LuaInterface to function.")
+    print("Exit out of BizHawk completely and open it again.")
+    gui.text(25,50, "This script requires Lua+LuaInterface to function.")
     gui.text(25,100, "Click Config -> Customize and then the Advanced Tab.")
     gui.text(25,150, "At the bottom, click the Lua+LuaInterface and then OK.")
-    gui.text(25,200, "Exit out of BizHawk completely and click Launch in CC.")
-    gui.text(25,250, "If you need more help. Join our Discord! https://discord.warp.world")
+    gui.text(25,200, "Exit out of BizHawk completely and open it again.")
 		return false
   end
   hal.bizhawk_major = tonumber(bizhawk_version:sub(1,1))
