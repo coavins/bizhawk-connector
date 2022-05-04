@@ -1,4 +1,4 @@
-# BizHawk connector script
+# BizHawk Connector
 
 ## Purpose
 
@@ -8,7 +8,9 @@ This was forked from Crowd Control's connector.lua to fix bugs and improve suppo
 
 ## Usage
 
-Load the `connector.lua` script into BizHawk (2.3 - 2.7) to connect to an Emotracker pack that supports autotracking. See more detailed instructions [here](https://github.com/coavins/EmoTrackerPacks#connect-to-bizhawk).
+Simply download and extract anywhere. Load the `connector.lua` script into BizHawk (2.3 - 2.7) to connect to an Emotracker pack that supports autotracking. See more detailed instructions [here](https://github.com/coavins/EmoTrackerPacks#connect-to-bizhawk).
+
+It is recommended to load this *after* other scripts like Archipelago's OOT lua.
 
 ## Compatibility
 
@@ -18,8 +20,6 @@ This script was tested and known to work with the following software:
 * BizHawk 2.7.0 (x64) commit dbaf25956
 * Archipelago Ocarina of Time Client 0.3.1
 
-It is recommended to load this *after* other scripts like Archipelago's OOT lua.
-
 ## Attribution
 
-These scripts were taken and modified from the Bizhawk connector.lua provided in Warp World's Crowd Control SDK.
+These scripts were taken and modified from the Bizhawk connector.lua provided in Warp World's Crowd Control SDK. It is unknown how they are each licensed. Works provided by Warp World are known to be freely modified and redistributed, with attribution.
