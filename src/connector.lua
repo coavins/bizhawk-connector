@@ -24,8 +24,6 @@ local lastTime = 0
 local receiveSize = 0
 local receivePart = nil
 
-local busDomain = nil
-local effectQueue = {}
 local memFreezes = {}
 
 require('statemachine')
@@ -36,40 +34,7 @@ local STATE_CONNECTING = "connecting"
 local STATE_CONNECTED = "connected"
 local STATE_EXIT = "exit"
 
-function applyFreezes()
-	for k, fz in pairs(memFreezes) do
-		local sz = fz['size']
-		if checkCond(fz) then
-			local wType = fz['writeType']
-			local val
-			local rF, wF
-			if (sz == 1) and (wType > 0) then
-				rF = hal.read_u8
-				wF = hal.write_u8
-			elseif sz == 2 then
-				rF = hal.read_u16_le
-				wF = hal.write_u16_le
-			elseif sz == 4 then
-				rF = hal.read_u32_le
-				wF = hal.write_u32_le
-			end
-
-			if (fz['writeType'] == 0x01) then
-				val = fz['value']
-			elseif (fz['writeType'] == 0x02) then
-				val = rF(fz['address'], fz['domain']) + fz['value']
-			elseif (fz['writeType'] == 0x03) then
-				val = rF(fz['address'], fz['domain']) - fz['value']
-			elseif (fz['writeType'] == 0x04) then
-				val = bit.bor(bit.band(fz['value'], fz['mask']), bit.band(rF(fz['address'], fz['domain']), bit.bnot(fz['mask'])))
-			end
-
-			wF(fz['address'], val, fz['domain'])
-		end
-	end
-end
-
-function checkCond(fz)
+local function checkCond(fz)
 	local cond = fz['condition']
 	if cond == 0x03 then --always
 		return true;
@@ -111,6 +76,39 @@ function checkCond(fz)
 	return false
 end
 
+local function applyFreezes()
+	for k, fz in pairs(memFreezes) do
+		local sz = fz['size']
+		if checkCond(fz) then
+			local wType = fz['writeType']
+			local val
+			local rF, wF
+			if (sz == 1) and (wType > 0) then
+				rF = hal.read_u8
+				wF = hal.write_u8
+			elseif sz == 2 then
+				rF = hal.read_u16_le
+				wF = hal.write_u16_le
+			elseif sz == 4 then
+				rF = hal.read_u32_le
+				wF = hal.write_u32_le
+			end
+
+			if (fz['writeType'] == 0x01) then
+				val = fz['value']
+			elseif (fz['writeType'] == 0x02) then
+				val = rF(fz['address'], fz['domain']) + fz['value']
+			elseif (fz['writeType'] == 0x03) then
+				val = rF(fz['address'], fz['domain']) - fz['value']
+			elseif (fz['writeType'] == 0x04) then
+				val = bit.bor(bit.band(fz['value'], fz['mask']), bit.band(rF(fz['address'], fz['domain']), bit.bnot(fz['mask'])))
+			end
+
+			wF(fz['address'], val, fz['domain'])
+		end
+	end
+end
+
 local function removeHold(addr)
 	for i, v in pairs(memFreezes) do
 		if (v.address == addr) then
@@ -119,7 +117,23 @@ local function removeHold(addr)
 	end
 end
 
-function processBlock(block)
+local function sendBlock(block)
+	local data = json.encode(block)
+	local size = data:len()
+	-- print('send', data)
+
+	local a = string.char(bit.band(bit.rshift(size, 24), 0xFF))
+	local b = string.char(bit.band(bit.rshift(size, 16), 0xFF))
+	local c = string.char(bit.band(bit.rshift(size, 8), 0xFF))
+	local d = string.char(bit.band(size, 0xFF))
+
+	local ret, err = tcp:send(a .. b .. c .. d .. data)
+	if ret == nil then
+		print('Failed to send:', err)
+	end
+end
+
+local function processBlock(block)
 	local commandType = block['type']
 	local domain = block['domain']
 	local address = block['address']
@@ -218,23 +232,21 @@ function processBlock(block)
 	sendBlock(result)
 end
 
-function sendBlock(block)
-	local data = json.encode(block)
-	local size = data:len()
-	-- print('send', data)
-
-	local a = string.char(bit.band(bit.rshift(size, 24), 0xFF))
-	local b = string.char(bit.band(bit.rshift(size, 16), 0xFF))
-	local c = string.char(bit.band(bit.rshift(size, 8), 0xFF))
-	local d = string.char(bit.band(size, 0xFF))
-
-	local ret, err = tcp:send(a .. b .. c .. d .. data)
-	if ret == nil then
-		print('Failed to send:', err)
+local function reconnect()
+	if connectorStateMachine:get_current_state_name() ~= STATE_EXIT then
+		connectorStateMachine:set_current_state(STATE_CONNECTING)
 	end
 end
 
-function receiveData(n)
+local function disconnect()
+	if tcp then
+		tcp:shutdown()
+		tcp:close()
+		tcp = nil
+	end
+end
+
+local function receiveData(n)
 	local data, err, part = tcp:receive(n, receivePart)
 	if data == nil then
 		if err ~= 'timeout' then
@@ -249,7 +261,7 @@ function receiveData(n)
 	return data
 end
 
-function receive()
+local function receive()
 	currTime = os.time()
 
 	while true do
@@ -279,20 +291,6 @@ function receive()
 	if lastTime + KEEPALIVE_DELAY < currTime then
 		print('Keepalive failed')
 		reconnect()
-	end
-end
-
-function reconnect()
-	if connectorStateMachine:get_current_state_name() ~= STATE_EXIT then
-		connectorStateMachine:set_current_state(STATE_CONNECTING)
-	end
-end
-
-function disconnect()
-	if tcp then
-		tcp:shutdown()
-		tcp:close()
-		tcp = nil
 	end
 end
 
