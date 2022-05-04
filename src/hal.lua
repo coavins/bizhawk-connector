@@ -10,7 +10,7 @@ local base64 = require('base64')
 local hal = { _version = "0.1.0" }
 
 function hal._luacore()
-    if (client.get_lua_engine ~= nil) then
+		if (client.get_lua_engine ~= nil) then
 		return client.get_lua_engine()
 	elseif (emu.getluacore ~= nil) then
 		return emu.getluacore()
@@ -32,7 +32,7 @@ function hal.read_u32_le(address, domain)
 end
 
 function hal.write_u8(address, value, domain)
-  memory.write_u8(address, value, domain)
+	memory.write_u8(address, value, domain)
 end
 
 function hal.write_u16_le(address, value, domain)
@@ -64,14 +64,14 @@ end
 
 --	Return a HAL-appropriate byte-range from a base64-encoded buffer, for use with write_byte_range
 function hal.unpack_byte_range(packedBuffer, offset)
-  local unpacked = from_base64(packedBuffer)
-  local result = {}
-  --result:setn(unpacked:len())
-  for i = 0, unpacked:len() do
-    local n = i + 1
-    result[offset + i] = unpacked:byte(n, n)
-  end
-  return result
+	local unpacked = from_base64(packedBuffer)
+	local result = {}
+	--result:setn(unpacked:len())
+	for i = 0, unpacked:len() do
+		local n = i + 1
+		result[offset + i] = unpacked:byte(n, n)
+	end
+	return result
 end
 
 function hal.open_rom(path)
@@ -109,15 +109,15 @@ function hal.draw_get_framebuffer_height()
 end
 
 function hal.draw_begin()
-  if (emu.bizhawk_major == 2) and (emu.bizhawk_minor < 6) then
+	if (emu.bizhawk_major == 2) and (emu.bizhawk_minor < 6) then
 	gui.DrawNew("emu", true)
-  end
+	end
 end
 
 function hal.draw_end()
-  if (emu.bizhawk_major == 2) and (emu.bizhawk_minor < 6) then
+	if (emu.bizhawk_major == 2) and (emu.bizhawk_minor < 6) then
 	gui.DrawFinish()
-  end
+	end
 end
 
 --	Render colored text at a specified pixel location
@@ -127,17 +127,17 @@ end
 
 --	Clear the drawing canvas
 function hal.draw_clear()
-  if (emu.bizhawk_major == 2) and (emu.bizhawk_minor < 6) then
+	if (emu.bizhawk_major == 2) and (emu.bizhawk_minor < 6) then
 	gui.DrawNew("emu", true)
 	gui.DrawFinish()
-  else
-    gui.clearGraphics()
-    gui.cleartext()
-  end
+	else
+		gui.clearGraphics()
+		gui.cleartext()
+	end
 end
 
 function hal.framecount()
-  return emu.framecount()
+	return emu.framecount()
 end
 
 function hal.corestate_save()
@@ -172,9 +172,9 @@ function hal.register_shutdown(name, callback)
 end
 
 function table.copy(t)
-  local u = { }
-  for k, v in pairs(t) do u[k] = v end
-  return setmetatable(u, getmetatable(t))
+	local u = { }
+	for k, v in pairs(t) do u[k] = v end
+	return setmetatable(u, getmetatable(t))
 end
 
 local function invokeCallbackList(_callbacks)
@@ -203,7 +203,7 @@ function hal.startup()
 	event.unregisterbyname('cc.exit')
 
 	local luacore = hal._luacore()
-    if luacore  ~= 'LuaInterface' then
+		if luacore  ~= 'LuaInterface' then
 		print('Unsupported Lua core:', luacore)
 		return
 	end
@@ -229,17 +229,17 @@ end
 
 function hal.validate_environment()
 
-  local bizhawk_version
+	local bizhawk_version
 
-  if client.getversion ~= nil then
-    bizhawk_version = client.getversion()
-  else
-  	if ((emu.getregisters().H == nil) or (emu.getregisters().H == 0)) then
-  		bizhawk_version = "2.3.0"
+	if client.getversion ~= nil then
+		bizhawk_version = client.getversion()
+	else
+		if ((emu.getregisters().H == nil) or (emu.getregisters().H == 0)) then
+			bizhawk_version = "2.3.0"
 	else
 		bizhawk_version = "unsupported"
 	end
-  end
+	end
 
 	local known_good = {}
 	known_good['2.3.0'] = true
@@ -254,19 +254,21 @@ function hal.validate_environment()
 		return false
 	elseif (hal._luacore() ~= 'LuaInterface')  then
 		print('Unsupported Lua core:', hal._luacore())
-    print("This script requires Lua+LuaInterface to function.")
-    print("Click Config -> Customize and then the Advanced Tab.")
-    print("At the bottom, click the Lua+LuaInterface and then OK.")
-    print("Exit out of BizHawk completely and open it again.")
-    gui.text(25,50, "This script requires Lua+LuaInterface to function.")
-    gui.text(25,100, "Click Config -> Customize and then the Advanced Tab.")
-    gui.text(25,150, "At the bottom, click the Lua+LuaInterface and then OK.")
-    gui.text(25,200, "Exit out of BizHawk completely and open it again.")
+		print("This script requires Lua+LuaInterface to function.")
+		print("Click Config -> Customize and then the Advanced Tab.")
+		print("At the bottom, click the Lua+LuaInterface and then OK.")
+		print("Exit out of BizHawk completely and open it again.")
+		gui.text(25,50, "This script requires Lua+LuaInterface to function.")
+		gui.text(25,100, "Click Config -> Customize and then the Advanced Tab.")
+		gui.text(25,150, "At the bottom, click the Lua+LuaInterface and then OK.")
+		gui.text(25,200, "Exit out of BizHawk completely and open it again.")
 		return false
-  end
-  hal.bizhawk_major = tonumber(bizhawk_version:sub(1,1))
-  hal.bizhawk_minor = tonumber(bizhawk_version:sub(3,1))
-  return true
+	end
+
+	hal.bizhawk_major = tonumber(bizhawk_version:sub(1,1))
+	hal.bizhawk_minor = tonumber(bizhawk_version:sub(3,1))
+
+	return true
 end
 
 return hal
