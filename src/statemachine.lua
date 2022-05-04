@@ -1,3 +1,5 @@
+-- Provided by Warp World's Crowd Control SDK
+
 require('class')
 
 --	A simple finite state machine with tick and transition callbacks per state

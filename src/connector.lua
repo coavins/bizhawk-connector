@@ -1,3 +1,4 @@
+-- Provided by Warp World's Crowd Control SDK
 
 local hal = require('hal')
 if not hal.validate_environment() then
