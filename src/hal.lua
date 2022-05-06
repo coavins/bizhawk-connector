@@ -248,10 +248,11 @@ function hal.validate_environment()
 	known_good['2.4'] = true
 	known_good['2.6'] = true
 	known_good['2.7'] = true
+	known_good['2.8'] = true
 
 	if (hal._luacore() == nil) or (not known_good[bizhawk_version] and not known_good[bizhawk_version:sub(1,3)]) then
-		print("This script might require BizHawk 2.3 - 2.7 to function")
-		gui.text(25,50, "This script might require BizHawk 2.3 - 2.7 to function")
+		print("This script might require BizHawk 2.3 - 2.8 to function")
+		gui.text(25,50, "This script might require BizHawk 2.3 - 2.8 to function")
 		return false
 	elseif (hal._luacore() ~= 'LuaInterface')  then
 		print('Unsupported Lua core:', hal._luacore())
