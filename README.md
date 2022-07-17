@@ -4,11 +4,15 @@
 
 This script connects BizHawk to EmoTracker for use with autotracker packs. You can use this instead of the version that ships with EmoTracker for improved compatibility with Archipelago and newer versions of BizHawk.
 
-## Usage
+## Install
 
-Download and extract into BizHawk's Lua folder. Load the `Lua\bizhawk-connector\connector.lua` file into BizHawk (2.3 - 2.8) to connect to an Emotracker pack that supports autotracking. See more detailed instructions [here](https://github.com/coavins/EmoTrackerPacks#connect-to-bizhawk).
+Copy the `bizhawk-connector` directory into BizHawk's `Lua` folder. Load the `Lua\bizhawk-connector\connector.lua` file into BizHawk (2.3 - 2.8) to connect to an Emotracker pack that supports autotracking. See more detailed instructions [here](https://github.com/coavins/EmoTrackerPacks#connect-to-bizhawk).
 
 It is recommended to load this *after* other scripts like Archipelago's OOT lua.
+
+## Update
+
+Delete your `bizhawk-connector` folder and follow the install steps again.
 
 ## Compatibility
 
