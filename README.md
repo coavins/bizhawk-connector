@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This script connects BizHawk to EmoTracker for use with autotracker packs. Use this instead of the version that ships with EmoTracker for improved compatibility with Archipelago and newer versions of BizHawk.
+This script connects BizHawk to EmoTracker for use with autotracker packs. You can use this instead of the version that ships with EmoTracker for improved compatibility with Archipelago and newer versions of BizHawk.
 
 ## Usage
 
@@ -20,4 +20,4 @@ This script was tested and known to work with the following software:
 
 ## Attribution
 
-These scripts were taken and modified from the Bizhawk connector.lua provided in Warp World's Crowd Control SDK. It is unknown how they are each licensed. Works provided by Warp World are known to be freely modified and redistributed, with attribution.
+These scripts were taken and modified from the Bizhawk connector.lua provided in Warp World's Crowd Control SDK. It is unknown how they are each licensed, but Warp World support stated that they are free to be modified and redistributed, with attribution.
